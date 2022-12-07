@@ -1,1 +1,1 @@
-deb [arch=amd64] https://packages.microsoft.com/ubuntu/18.04/prod bionic main
+deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod bionic main
