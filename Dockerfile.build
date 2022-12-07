@@ -4,6 +4,6 @@ COPY files/msprod.list /etc/apt/sources.list.d/msprod.list
 RUN wget -qO - https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
 # COPY files/setup-build.sh /
 # RUN bash /setup-build.sh
-ls -la /dev/sgx*
+RUN ls -la /dev/sgx*
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
