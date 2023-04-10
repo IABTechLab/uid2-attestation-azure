@@ -27,7 +27,7 @@
     <dependencies>
         <dependency>
             <groupId>com.uid2</groupId>
-            <artifactId>enclave-attestation-api</artifactId>
+            <artifactId>uid2-attestation-api</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
