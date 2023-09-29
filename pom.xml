@@ -38,6 +38,12 @@
             <artifactId>uid2-attestation-api</artifactId>
             <version>1.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <distributionManagement>
@@ -57,8 +63,8 @@
                         <arg>-h</arg>
                         <arg>target/headers</arg>
                     </compilerArgs>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>       
 	    <plugin>
