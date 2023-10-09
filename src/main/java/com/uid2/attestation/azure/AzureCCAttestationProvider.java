@@ -4,7 +4,6 @@ import com.uid2.enclave.AttestationException;
 import com.uid2.enclave.IAttestationProvider;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -13,27 +12,34 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Base64;
-import java.util.HashMap;
+import java.util.Map;
 
 public class AzureCCAttestationProvider implements IAttestationProvider {
 	private final String maaEndpoint;
-	private static final String DefaultMaaEndpoint = "sharedeus.eus.attest.azure.net";
+	public static final String DefaultMaaEndpoint = "sharedeus.eus.attest.azure.net";
+	
 	private final String skrEndpoint;
-	private static final String DefaultSkrEndpoint = "http://localhost:8080/attest/maa";
+	public static final String DefaultSkrEndpoint = "http://localhost:8080/attest/maa";
+	
 	private final HttpClient httpClient;
+	private String location;
 	
 	public AzureCCAttestationProvider() {
-		this(DefaultSkrEndpoint, DefaultMaaEndpoint, null);
+		this(DefaultSkrEndpoint, DefaultMaaEndpoint, null, null);
 	}
 	public AzureCCAttestationProvider(String maaEndpoint) {
-		this(maaEndpoint, DefaultSkrEndpoint, null);
+		this(maaEndpoint, DefaultSkrEndpoint, null, null);
 	}
 	
 	public AzureCCAttestationProvider(String maaEndpoint, String skrEndpoint) {
-		this(maaEndpoint, skrEndpoint, null);
+		this(maaEndpoint, skrEndpoint, null, null);
 	}
 	
 	public AzureCCAttestationProvider(String maaEndpoint, String skrEndpoint, HttpClient httpClient) {
+		this(maaEndpoint, skrEndpoint, httpClient, null);
+	}
+	
+	public AzureCCAttestationProvider(String maaEndpoint, String skrEndpoint, HttpClient httpClient, String location) {
 		this.maaEndpoint = maaEndpoint;
 		this.skrEndpoint = skrEndpoint;
 		
@@ -42,26 +48,29 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 		} else {
 			this.httpClient = HttpClient.newHttpClient();
 		}
+		
+		if (location != null) {
+			this.location = location;
+		}
 	}
+	
 	@Override
 	public byte[] getAttestationRequest(byte[] publicKey) throws AttestationException {
 		var base64Encoder = Base64.getEncoder();
 		var gson = new Gson();
 		
-		var runtimeData = new HashMap<String, String>();
-		runtimeData.put("location", getLocation());
-		runtimeData.put("publicKey", base64Encoder.encodeToString(publicKey));
+		var runtimeData = Map.of("location", getLocation(), "publicKey", base64Encoder.encodeToString(publicKey));
 		String runtimeDataJson = gson.toJson(runtimeData);
 		
-		var body = new HashMap<String, String>();
-		body.put("maa_endpoint", this.maaEndpoint);
-		body.put("runtime_data", base64Encoder.encodeToString(runtimeDataJson.getBytes()));
-		String bodyJson = gson.toJson(body);
+		var skrRequest = new SkrRequest();
+		skrRequest.maa_endpoint = this.maaEndpoint;
+		skrRequest.runtime_data = base64Encoder.encodeToString(runtimeDataJson.getBytes());
 		
+		String requestBody = gson.toJson(skrRequest);
 		var request = HttpRequest.newBuilder()
 				.uri(URI.create(skrEndpoint))
 				.header("Content-Type", "application/json")
-				.POST(HttpRequest.BodyPublishers.ofString(bodyJson))
+				.POST(HttpRequest.BodyPublishers.ofString(requestBody))
 				.build();
 
 		try {
@@ -70,13 +79,15 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 				throw new AttestationException("Skr failed with status code: " + response.statusCode() + " body: " + response.body());
 			}
 
-			var responseBodyType = new TypeToken<HashMap<String, String>>(){};
-			var responseBody = gson.fromJson(response.body(), responseBodyType);
-			var token = responseBody.get("token");
-			if (token == null) {
+			var skrResponse = gson.fromJson(response.body(), SkrResponse.class);
+			if (skrResponse == null) {
+				throw new AttestationException("response is null");
+			}
+			
+			if (skrResponse.token == null || skrResponse.token.isEmpty()) {
 				throw new AttestationException("token field not exist in Skr response");
 			}
-			return token.getBytes();
+			return skrResponse.token.getBytes();
 		} catch (IOException e) {
 			throw new AttestationException(e);
 		} catch (InterruptedException e) {
@@ -85,6 +96,20 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 	}
 	
 	private String getLocation() throws AttestationException {
+		if (this.location != null) {
+			return this.location;
+		}
+		
+		// TODO(lun.wang) get location from meta server
 		return "";
+	}
+
+	private static class SkrRequest {
+		private String maa_endpoint;
+		private String runtime_data;
+	}
+
+	private static class SkrResponse {
+		private String token;
 	}
 }
