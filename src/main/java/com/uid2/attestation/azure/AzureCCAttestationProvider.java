@@ -45,12 +45,11 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 	 * Azure confidential container provider.
 	 * Use SKR sidecar (https://github.com/microsoft/confidential-sidecar-containers) to get MAA token.
 	 *
-	 * @param maaServerBaseUrl attestation server base URL, e.g. https://sharedeus.eus.attest.azure.net
-	 * @param skrUrl SKR sidecar API URL
-	 * @param httpClient
+	 * @param maaServerBaseUrl attestation server base URL, e.g. https://sharedeus.eus.attest.azure.net, default url will be used if it's null
+	 * @param skrUrl SKR sidecar API URL, default URL will be used if it's null
+	 * @param httpClient new httpClient object will be created if it's null
 	 * @param location deployment location, for testing
 	 *
-	 * @return provider
 	 */
 	public AzureCCAttestationProvider(String maaServerBaseUrl, String skrUrl, HttpClient httpClient, String location) {
 		if (maaServerBaseUrl != null ) {
