@@ -24,6 +24,7 @@ public class AzureCCAttestationProviderTest {
         
         // Mock response
         final var publicTokenMock = new byte[] {0x01, 0x02};
+        final var skrUrlMock = "http://skr";
         final var maaTokenMock = "abc";
         final var httpResponseMock = mock(HttpResponse.class);
         when(httpResponseMock.statusCode()).thenReturn(HttpURLConnection.HTTP_OK);
@@ -33,8 +34,7 @@ public class AzureCCAttestationProviderTest {
         when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(httpResponseMock);
         
         // Verify output
-        final var provider = new AzureCCAttestationProvider(AzureCCAttestationProvider.DefaultMaaEndpoint,
-                AzureCCAttestationProvider.DefaultSkrEndpoint, httpClientMock);
+        final var provider = new AzureCCAttestationProvider(null, skrUrlMock, httpClientMock);
         var output = provider.getAttestationRequest(publicTokenMock);
         Assert.assertArrayEquals(maaTokenMock.getBytes(), output);
         
@@ -42,7 +42,7 @@ public class AzureCCAttestationProviderTest {
         var requestCaptor = ArgumentCaptor.forClass(HttpRequest.class);
         verify(httpClientMock).send(requestCaptor.capture(), any(HttpResponse.BodyHandler.class));
         var request = requestCaptor.getValue();
-        Assert.assertEquals(AzureCCAttestationProvider.DefaultSkrEndpoint, request.uri().toString());
+        Assert.assertEquals(skrUrlMock, request.uri().toString());
     }
     
     @Test
@@ -54,8 +54,7 @@ public class AzureCCAttestationProviderTest {
         final var httpClientMock = mock(HttpClient.class);
         when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(httpResponseMock);
 
-        final var provider = new AzureCCAttestationProvider(AzureCCAttestationProvider.DefaultMaaEndpoint,
-                AzureCCAttestationProvider.DefaultSkrEndpoint, httpClientMock);
+        final var provider = new AzureCCAttestationProvider(null, null, httpClientMock);
         var thrown = Assert.assertThrows(AttestationException.class, () -> provider.getAttestationRequest(publicTokenMock));
         Assert.assertTrue(thrown.getMessage().startsWith("Skr failed with status code: " + HttpURLConnection.HTTP_INTERNAL_ERROR));
     }
@@ -69,8 +68,7 @@ public class AzureCCAttestationProviderTest {
         final var httpClientMock = mock(HttpClient.class);
         when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(httpResponseMock);
 
-        final var provider = new AzureCCAttestationProvider(AzureCCAttestationProvider.DefaultMaaEndpoint,
-                AzureCCAttestationProvider.DefaultSkrEndpoint, httpClientMock);
+        final var provider = new AzureCCAttestationProvider(null, null, httpClientMock);
         var thrown = Assert.assertThrows(AttestationException.class, () -> provider.getAttestationRequest(publicTokenMock));
         Assert.assertEquals("response is null", thrown.getMessage());
     }
@@ -86,8 +84,7 @@ public class AzureCCAttestationProviderTest {
         final var httpClientMock = mock(HttpClient.class);
         when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(httpResponseMock);
 
-        final var provider = new AzureCCAttestationProvider(AzureCCAttestationProvider.DefaultMaaEndpoint,
-                AzureCCAttestationProvider.DefaultSkrEndpoint, httpClientMock);
+        final var provider = new AzureCCAttestationProvider(null, null, httpClientMock);
         var thrown = Assert.assertThrows(AttestationException.class, () -> provider.getAttestationRequest(publicTokenMock));
         Assert.assertEquals("token field not exist in Skr response", thrown.getMessage());
     }

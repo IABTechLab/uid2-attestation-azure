@@ -16,32 +16,53 @@ import java.util.Map;
 
 public class AzureCCAttestationProvider implements IAttestationProvider {
 	private final String maaEndpoint;
-	public static final String DefaultMaaEndpoint = "sharedeus.eus.attest.azure.net";
+	private static final String DefaultMaaEndpoint = "sharedeus.eus.attest.azure.net";
 	
-	private final String skrEndpoint;
-	public static final String DefaultSkrEndpoint = "http://localhost:8080/attest/maa";
+	private final String skrUrl;
+	private static final String DefaultSkrUrl = "http://localhost:8080/attest/maa";
 	
 	private final HttpClient httpClient;
 	private String location;
 	
 	public AzureCCAttestationProvider() {
-		this(DefaultSkrEndpoint, DefaultMaaEndpoint, null, null);
+		this(null, null, null, null);
 	}
+
 	public AzureCCAttestationProvider(String maaEndpoint) {
-		this(maaEndpoint, DefaultSkrEndpoint, null, null);
+		this(maaEndpoint, null, null, null);
 	}
 	
-	public AzureCCAttestationProvider(String maaEndpoint, String skrEndpoint) {
-		this(maaEndpoint, skrEndpoint, null, null);
+	public AzureCCAttestationProvider(String maaEndpoint, String skrUrl) {
+		this(maaEndpoint, skrUrl, null, null);
 	}
 	
-	public AzureCCAttestationProvider(String maaEndpoint, String skrEndpoint, HttpClient httpClient) {
-		this(maaEndpoint, skrEndpoint, httpClient, null);
+	public AzureCCAttestationProvider(String maaEndpoint, String skrUrl, HttpClient httpClient) {
+		this(maaEndpoint, skrUrl, httpClient, null);
 	}
 	
-	public AzureCCAttestationProvider(String maaEndpoint, String skrEndpoint, HttpClient httpClient, String location) {
-		this.maaEndpoint = maaEndpoint;
-		this.skrEndpoint = skrEndpoint;
+	/**
+	 * Azure confidential container provider.
+	 * Use SKR sidecar (https://github.com/microsoft/confidential-sidecar-containers) to get MAA token.
+	 *
+	 * @param maaEndpoint request param to the SKR sidecar API, e.g. sharedeus.eus.attest.azure.net
+	 * @param skrUrl SKR sidecar API URL
+	 * @param httpClient
+	 * @param location deployment location, for testing
+	 *
+	 * @return provider
+	 */
+	public AzureCCAttestationProvider(String maaEndpoint, String skrUrl, HttpClient httpClient, String location) {
+		if (maaEndpoint != null ) {
+			this.maaEndpoint = maaEndpoint;
+		} else {
+			this.maaEndpoint = DefaultMaaEndpoint;
+		}
+
+		if (skrUrl != null) {
+			this.skrUrl = skrUrl;
+		} else {
+			this.skrUrl = DefaultSkrUrl;
+		}
 		
 		if (httpClient != null) {
 			this.httpClient = httpClient;
@@ -51,6 +72,8 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 		
 		if (location != null) {
 			this.location = location;
+		} else {
+			this.location = getLocation();
 		}
 	}
 	
@@ -59,7 +82,7 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 		var base64Encoder = Base64.getEncoder();
 		var gson = new Gson();
 		
-		var runtimeData = Map.of("location", getLocation(), "publicKey", base64Encoder.encodeToString(publicKey));
+		var runtimeData = Map.of("location", this.location, "publicKey", base64Encoder.encodeToString(publicKey));
 		String runtimeDataJson = gson.toJson(runtimeData);
 		
 		var skrRequest = new SkrRequest();
@@ -68,7 +91,7 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 		
 		String requestBody = gson.toJson(skrRequest);
 		var request = HttpRequest.newBuilder()
-				.uri(URI.create(skrEndpoint))
+				.uri(URI.create(this.skrUrl))
 				.header("Content-Type", "application/json")
 				.POST(HttpRequest.BodyPublishers.ofString(requestBody))
 				.build();
@@ -95,12 +118,8 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 		}
 	}
 	
-	private String getLocation() throws AttestationException {
-		if (this.location != null) {
-			return this.location;
-		}
-		
-		// TODO(lun.wang) get location from meta server
+	private String getLocation() {
+		// TODO(lun.wang) get location
 		return "";
 	}
 
