@@ -20,7 +20,7 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 	private final String maaEndpoint; // request param to SKR API which is parsed from maaServerBaseUrl
 	
 	private final String skrUrl;
-	private static final String DefaultSkrUrl = "http://localhost:8080/attest/maa";
+	private static final String DefaultSkrUrl = "http://localhost:9000/attest/maa";
 	
 	private final HttpClient httpClient;
 	private String location;
