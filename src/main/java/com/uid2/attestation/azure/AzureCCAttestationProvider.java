@@ -114,9 +114,9 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 			}
 			return skrResponse.token.getBytes();
 		} catch (IOException e) {
-			throw new AttestationException(e);
+			throw new AttestationException("failed to access Skr API: " + e.getMessage());
 		} catch (InterruptedException e) {
-			throw new AttestationException(e);
+			throw new AttestationException("failed to access Skr API: " + e.getMessage());
 		}
 	}
 	
