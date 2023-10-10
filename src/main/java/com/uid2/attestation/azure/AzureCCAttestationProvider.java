@@ -122,7 +122,7 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 	
 	private String getLocation() {
 		// TODO(lun.wang) get location
-		return "";
+		return "East US";
 	}
 
 	private static class SkrRequest {
