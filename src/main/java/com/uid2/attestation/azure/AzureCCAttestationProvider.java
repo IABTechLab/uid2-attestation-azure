@@ -15,8 +15,9 @@ import java.util.Base64;
 import java.util.Map;
 
 public class AzureCCAttestationProvider implements IAttestationProvider {
-	private final String maaEndpoint;
-	private static final String DefaultMaaEndpoint = "sharedeus.eus.attest.azure.net";
+	private final String maaServerBaseUrl;
+	private static final String DefaultMaaServerBaseUrl = "https://sharedeus.eus.attest.azure.net";
+	private final String maaEndpoint; // request param to SKR API which is parsed from maaServerBaseUrl
 	
 	private final String skrUrl;
 	private static final String DefaultSkrUrl = "http://localhost:8080/attest/maa";
@@ -28,35 +29,37 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 		this(null, null, null, null);
 	}
 
-	public AzureCCAttestationProvider(String maaEndpoint) {
-		this(maaEndpoint, null, null, null);
+	public AzureCCAttestationProvider(String maaServerBaseUrl) {
+		this(maaServerBaseUrl, null, null, null);
 	}
 	
-	public AzureCCAttestationProvider(String maaEndpoint, String skrUrl) {
-		this(maaEndpoint, skrUrl, null, null);
+	public AzureCCAttestationProvider(String maaServerBaseUrl, String skrUrl) {
+		this(maaServerBaseUrl, skrUrl, null, null);
 	}
 	
-	public AzureCCAttestationProvider(String maaEndpoint, String skrUrl, HttpClient httpClient) {
-		this(maaEndpoint, skrUrl, httpClient, null);
+	public AzureCCAttestationProvider(String maaServerBaseUrl, String skrUrl, HttpClient httpClient) {
+		this(maaServerBaseUrl, skrUrl, httpClient, null);
 	}
 	
 	/**
 	 * Azure confidential container provider.
 	 * Use SKR sidecar (https://github.com/microsoft/confidential-sidecar-containers) to get MAA token.
 	 *
-	 * @param maaEndpoint request param to the SKR sidecar API, e.g. sharedeus.eus.attest.azure.net
+	 * @param maaServerBaseUrl attestation server base URL, e.g. https://sharedeus.eus.attest.azure.net
 	 * @param skrUrl SKR sidecar API URL
 	 * @param httpClient
 	 * @param location deployment location, for testing
 	 *
 	 * @return provider
 	 */
-	public AzureCCAttestationProvider(String maaEndpoint, String skrUrl, HttpClient httpClient, String location) {
-		if (maaEndpoint != null ) {
-			this.maaEndpoint = maaEndpoint;
+	public AzureCCAttestationProvider(String maaServerBaseUrl, String skrUrl, HttpClient httpClient, String location) {
+		if (maaServerBaseUrl != null ) {
+			this.maaServerBaseUrl = maaServerBaseUrl;
 		} else {
-			this.maaEndpoint = DefaultMaaEndpoint;
+			this.maaServerBaseUrl = DefaultMaaServerBaseUrl;
 		}
+
+		this.maaEndpoint = URI.create(this.maaServerBaseUrl).getHost();
 
 		if (skrUrl != null) {
 			this.skrUrl = skrUrl;
