@@ -84,9 +84,11 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 		var base64Encoder = Base64.getEncoder();
 		var gson = new Gson();
 		
-		var runtimeData = Map.of("location", this.location, "publicKey", base64Encoder.encodeToString(publicKey));
+		var runtimeData = new RuntimeData();
+		runtimeData.location = this.location;
+		runtimeData.publicKey = base64Encoder.encodeToString(publicKey);
 		String runtimeDataJson = gson.toJson(runtimeData);
-		
+
 		var skrRequest = new SkrRequest();
 		skrRequest.maa_endpoint = this.maaEndpoint;
 		skrRequest.runtime_data = base64Encoder.encodeToString(runtimeDataJson.getBytes());
@@ -123,6 +125,11 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 	private String getLocation() {
 		// TODO(lun.wang) get location
 		return "East US";
+	}
+
+	private static class RuntimeData {
+		private String location;
+		private String publicKey;
 	}
 
 	private static class SkrRequest {
