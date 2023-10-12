@@ -5,7 +5,7 @@
 
     <groupId>com.uid2</groupId>
     <artifactId>attestation-azure</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.2.9-SNAPSHOT</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Azure SGX Enclave attestation</description>
@@ -38,6 +38,24 @@
             <artifactId>uid2-attestation-api</artifactId>
             <version>1.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <distributionManagement>
@@ -57,8 +75,8 @@
                         <arg>-h</arg>
                         <arg>target/headers</arg>
                     </compilerArgs>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>       
 	    <plugin>
@@ -136,6 +154,18 @@
     	        </execution>
     	      </executions>
     	    </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.8</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
