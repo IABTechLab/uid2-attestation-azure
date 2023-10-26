@@ -2,6 +2,7 @@ package com.uid2.attestation.azure;
 
 import com.azure.identity.ManagedIdentityCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
+import com.google.common.base.Strings;
 import com.uid2.enclave.IOperatorKeyRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,12 @@ public class AzureVaultOperatorKeyRetriever implements IOperatorKeyRetriever {
 
 
     public AzureVaultOperatorKeyRetriever(String vaultName, String secretName) {
+        if (Strings.isNullOrEmpty(vaultName)) {
+            throw new IllegalArgumentException("vaultName is null or empty");
+        }
+        if (Strings.isNullOrEmpty(secretName)) {
+            throw new IllegalArgumentException("secretName is null or empty");
+        }
         this.vaultName = vaultName;
         this.secretName = secretName;
     }
