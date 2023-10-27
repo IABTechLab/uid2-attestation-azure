@@ -13,7 +13,6 @@ public class AzureVaultOperatorKeyRetriever implements IOperatorKeyRetriever {
     private final String vaultName;
     private final String secretName;
 
-
     public AzureVaultOperatorKeyRetriever(String vaultName, String secretName) {
         if (Strings.isNullOrEmpty(vaultName)) {
             throw new IllegalArgumentException("vaultName is null or empty");
