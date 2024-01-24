@@ -5,7 +5,7 @@
 
     <groupId>com.uid2</groupId>
     <artifactId>attestation-azure</artifactId>
-    <version>1.5.16-d43239058c</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Azure Enclave attestation</description>
