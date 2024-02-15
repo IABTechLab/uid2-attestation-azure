@@ -80,13 +80,14 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 	}
 	
 	@Override
-	public byte[] getAttestationRequest(byte[] publicKey) throws AttestationException {
+	public byte[] getAttestationRequest(byte[] publicKey, byte[] userData) throws AttestationException {
 		var base64Encoder = Base64.getEncoder();
 		var gson = new Gson();
 		
 		var runtimeData = new RuntimeData();
 		runtimeData.location = this.location;
 		runtimeData.publicKey = base64Encoder.encodeToString(publicKey);
+		runtimeData.userData = base64Encoder.encodeToString(userData);
 		String runtimeDataJson = gson.toJson(runtimeData);
 
 		var skrRequest = new SkrRequest();
@@ -130,6 +131,7 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 	private static class RuntimeData {
 		private String location;
 		private String publicKey;
+		private String userData;
 	}
 
 	private static class SkrRequest {
