@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class AzureCCAttestationProviderTest {
     final private byte[] publicTokenMock = new byte[] {0x01, 0x02};
-    final private byte[] userDataMock = new byte[] {0x03, 0x04};
+    final private byte[] attestationUrlMock = new byte[] {0x03, 0x04};
 
     @Test
     public void testGetAttestationRequestSuccess() throws Exception {
@@ -37,7 +37,7 @@ public class AzureCCAttestationProviderTest {
         
         // Verify output
         final var provider = new AzureCCAttestationProvider(null, skrUrlMock, httpClientMock);
-        var output = provider.getAttestationRequest(publicTokenMock, userDataMock);
+        var output = provider.getAttestationRequest(publicTokenMock, attestationUrlMock);
         Assert.assertArrayEquals(maaTokenMock.getBytes(), output);
         
         // Verify sent request
@@ -56,7 +56,7 @@ public class AzureCCAttestationProviderTest {
         when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(httpResponseMock);
 
         final var provider = new AzureCCAttestationProvider(null, null, httpClientMock);
-        var thrown = Assert.assertThrows(AttestationException.class, () -> provider.getAttestationRequest(publicTokenMock, userDataMock));
+        var thrown = Assert.assertThrows(AttestationException.class, () -> provider.getAttestationRequest(publicTokenMock, attestationUrlMock));
         Assert.assertTrue(thrown.getMessage().startsWith("Skr failed with status code: " + HttpURLConnection.HTTP_INTERNAL_ERROR));
     }
     
@@ -69,7 +69,7 @@ public class AzureCCAttestationProviderTest {
         when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(httpResponseMock);
 
         final var provider = new AzureCCAttestationProvider(null, null, httpClientMock);
-        var thrown = Assert.assertThrows(AttestationException.class, () -> provider.getAttestationRequest(publicTokenMock, userDataMock));
+        var thrown = Assert.assertThrows(AttestationException.class, () -> provider.getAttestationRequest(publicTokenMock, attestationUrlMock));
         Assert.assertEquals("response is null", thrown.getMessage());
     }
 
@@ -84,7 +84,7 @@ public class AzureCCAttestationProviderTest {
         when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(httpResponseMock);
 
         final var provider = new AzureCCAttestationProvider(null, null, httpClientMock);
-        var thrown = Assert.assertThrows(AttestationException.class, () -> provider.getAttestationRequest(publicTokenMock, userDataMock));
+        var thrown = Assert.assertThrows(AttestationException.class, () -> provider.getAttestationRequest(publicTokenMock, attestationUrlMock));
         Assert.assertEquals("token field not exist in Skr response", thrown.getMessage());
     }
 }

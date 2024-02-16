@@ -12,7 +12,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Base64;
-import java.util.Map;
 
 public class AzureCCAttestationProvider implements IAttestationProvider {
 	private final String maaServerBaseUrl;
@@ -87,7 +86,7 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 		var runtimeData = new RuntimeData();
 		runtimeData.location = this.location;
 		runtimeData.publicKey = base64Encoder.encodeToString(publicKey);
-		runtimeData.userData = base64Encoder.encodeToString(userData);
+		runtimeData.attestationUrl = base64Encoder.encodeToString(userData);
 		String runtimeDataJson = gson.toJson(runtimeData);
 
 		var skrRequest = new SkrRequest();
@@ -131,7 +130,7 @@ public class AzureCCAttestationProvider implements IAttestationProvider {
 	private static class RuntimeData {
 		private String location;
 		private String publicKey;
-		private String userData;
+		private String attestationUrl;
 	}
 
 	private static class SkrRequest {
