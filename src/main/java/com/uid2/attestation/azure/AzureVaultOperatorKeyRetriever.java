@@ -1,11 +1,15 @@
 package com.uid2.attestation.azure;
 
+import com.azure.core.http.policy.ExponentialBackoffOptions;
+import com.azure.core.http.policy.RetryOptions;
 import com.azure.identity.ManagedIdentityCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.google.common.base.Strings;
 import com.uid2.enclave.IOperatorKeyRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Duration;
 
 public class AzureVaultOperatorKeyRetriever implements IOperatorKeyRetriever {
     private static final Logger LOGGER = LoggerFactory.getLogger(AzureVaultOperatorKeyRetriever.class);
@@ -29,10 +33,17 @@ public class AzureVaultOperatorKeyRetriever implements IOperatorKeyRetriever {
     public String retrieve() {
         String vaultUrl = "https://" + this.vaultName + ".vault.azure.net";
         LOGGER.info(String.format("Load OperatorKey secret (%s) from %s", this.secretName, vaultUrl));
-        // Use default ExponentialBackoff retry policy
+
+        ExponentialBackoffOptions exponentialBackoffOptions = new ExponentialBackoffOptions()
+                .setMaxRetries(10)
+                .setBaseDelay(Duration.ofSeconds(1))
+                .setMaxDelay(Duration.ofSeconds(30));
+        RetryOptions retryOptions = new RetryOptions(exponentialBackoffOptions);
+
         var secretClient = new SecretClientBuilder()
                 .vaultUrl(vaultUrl)
                 .credential(new ManagedIdentityCredentialBuilder().build())
+                .retryOptions(retryOptions)
                 .buildClient();
 
         var retrievedSecret = secretClient.getSecret(secretName);
