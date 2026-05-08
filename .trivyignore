@@ -1,3 +1,14 @@
 # List any vulnerability that are to be accepted
 # See https://aquasecurity.github.io/trivy/v0.35/docs/vulnerability/examples/filter/
 # for more details
+
+# CVE-2026-42577 — netty-transport-native-epoll DoS via RST on half-closed TCP connection.
+# Advisory: https://github.com/netty/netty/security/advisories/GHSA-rwm7-x88c-3g2p
+# This is a server-side bug — the GHSA description says the unclean shutdown affects
+# the "server-side channel" that has ALLOW_HALF_CLOSURE enabled. uid2-attestation-azure
+# is a JAR library that only makes outbound HTTPS calls (Azure attestation + Key Vault)
+# via the Azure SDK; it does not run a netty server or accept inbound connections.
+# Additionally, the netty maintainers only backported the fix to 4.2.13.Final and the
+# advisory's human-readable text states "All versions of 4.2.x" are affected — the OSV
+# structured range over-reports 4.1.x. We are on 4.1.133.Final. Tracking via UID2-7027.
+CVE-2026-42577 exp:2026-06-08

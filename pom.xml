@@ -42,21 +42,21 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Force netty to 4.1.132.Final to fix CVE-2026-33870 and CVE-2026-33871 (UID2-6916) -->
+            <!-- Force netty to 4.1.133.Final to fix CVE-2026-42583, CVE-2026-42579, CVE-2026-42584 (UID2-7027) -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http</artifactId>
-                <version>4.1.132.Final</version>
+                <version>4.1.133.Final</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http2</artifactId>
-                <version>4.1.132.Final</version>
+                <version>4.1.133.Final</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
-                <version>4.1.132.Final</version>
+                <version>4.1.133.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
