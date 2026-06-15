@@ -11,4 +11,4 @@
 # Additionally, the netty maintainers only backported the fix to 4.2.13.Final and the
 # advisory's human-readable text states "All versions of 4.2.x" are affected — the OSV
 # structured range over-reports 4.1.x. We are on 4.1.133.Final. Tracking via UID2-7027.
-CVE-2026-42577 exp:2026-06-08
+CVE-2026-42577 exp:2026-09-11
