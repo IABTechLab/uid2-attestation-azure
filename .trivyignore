@@ -12,3 +12,12 @@
 # advisory's human-readable text states "All versions of 4.2.x" are affected — the OSV
 # structured range over-reports 4.1.x. We are on 4.1.133.Final. Tracking via UID2-7027.
 CVE-2026-42577 exp:2026-06-08
+
+# jackson-databind data-binding vulnerability - no upstream fix released yet (fix targets: 2.18.8, 2.21.4, 3.1.4)
+# jackson-databind 2.18.4 is pulled in transitively via the Azure SDK (azure-core ->
+# azure-security-keyvault-secrets), not declared directly. No compatible fixed version is
+# available yet (current jackson 2.19.x does not contain the fix). Suppressing in the interim;
+# will be picked up via an Azure SDK bump once a fixed jackson ships in a compatible line.
+# See: UID2-7364
+CVE-2026-54512 exp:2026-07-25
+CVE-2026-54513 exp:2026-07-25
