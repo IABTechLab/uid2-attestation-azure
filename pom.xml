@@ -38,25 +38,36 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <java.version>21</java.version>
+        <netty.version>4.1.136.Final</netty.version>
+        <jackson.version>2.21.4</jackson.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Force netty to 4.1.135.Final to fix CVE-2026-44249, CVE-2026-45416, CVE-2026-45674, CVE-2026-47691 (UID2-7278) -->
+            <!-- Force jackson to a fixed version to resolve CVE-2026-54512, CVE-2026-54513 (UID2-7569, UID2-7570). -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Force netty to a fixed version. Originally 4.1.135.Final for CVE-2026-44249/45416/45674/47691 (UID2-7278);
+                 bumped to 4.1.136.Final for CVE-2026-55831/55833/56745/59901 (UID2-7571/7572/7573/7574). -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http</artifactId>
-                <version>4.1.135.Final</version>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http2</artifactId>
-                <version>4.1.135.Final</version>
+                <version>${netty.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
-                <version>4.1.135.Final</version>
+                <version>${netty.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
