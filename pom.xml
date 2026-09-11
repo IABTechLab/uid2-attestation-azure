@@ -38,7 +38,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <java.version>21</java.version>
-        <netty.version>4.1.136.Final</netty.version>
+        <netty.version>4.1.137.Final</netty.version>
         <jackson.version>2.21.4</jackson.version>
     </properties>
 
@@ -53,7 +53,8 @@
                 <scope>import</scope>
             </dependency>
             <!-- Force netty to a fixed version. Originally 4.1.135.Final for CVE-2026-44249/45416/45674/47691 (UID2-7278);
-                 bumped to 4.1.136.Final for CVE-2026-55831/55833/56745/59901 (UID2-7571/7572/7573/7574). -->
+                 bumped to 4.1.136.Final for CVE-2026-55831/55833/56745/59901 (UID2-7571/7572/7573/7574);
+                 bumped to 4.1.137.Final for CVE-2026-75595 (UID2-7850). -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http</artifactId>
